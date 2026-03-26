@@ -1,206 +1,233 @@
 const express = require("express");
 const router = express.Router();
 const Issue = require("../models/Issue");
-const protect = require("../middleware/authMiddleware");
 
-// All issue routes require login
-router.use(protect);
-
-// create issue
+// CREATE ISSUE - public for testing
 router.post("/", async (req, res) => {
   try {
-    const issue = await Issue.create(req.body);
-    res.json(issue);
+    const {
+      vehicleId,
+      description,
+      currentState,
+      requiredParts,
+      estimatedBill,
+    } = req.body;
+
+    const issue = await Issue.create({
+      vehicleId,
+      description,
+      currentState,
+      requiredParts,
+      estimatedBill,
+    });
+
+    res.status(201).json(issue);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message || "Failed to create issue" });
   }
 });
 
-// get all issues
-router.get("/", async (req, res) => {
-  try {
-    const issues = await Issue.find();
-    res.json(issues);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// get my requests
-router.get("/my-requests", async (req, res) => {
-  try {
-    const issues = await Issue.find();
-    res.json(issues);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// Jr Executive
-router.get("/jr-executive/pending", async (req, res) => {
-  try {
-    const issues = await Issue.find({ approvalByJEE: "pending" });
-    res.json(issues);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.put("/:id/jr-executive/approve", async (req, res) => {
-  try {
-    const issue = await Issue.findByIdAndUpdate(
-      req.params.id,
-      { approvalByJEE: "approved" },
-      { new: true }
-    );
-    res.json(issue);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.put("/:id/jr-executive/reject", async (req, res) => {
-  try {
-    const issue = await Issue.findByIdAndUpdate(
-      req.params.id,
-      { approvalByJEE: "rejected" },
-      { new: true }
-    );
-    res.json(issue);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// OIC
-router.get("/oic/pending", async (req, res) => {
-  try {
-    const issues = await Issue.find({ approvalByOIC: "pending" });
-    res.json(issues);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.put("/:id/oic/approve", async (req, res) => {
-  try {
-    const issue = await Issue.findByIdAndUpdate(
-      req.params.id,
-      { approvalByOIC: "approved" },
-      { new: true }
-    );
-    res.json(issue);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.put("/:id/oic/reject", async (req, res) => {
-  try {
-    const issue = await Issue.findByIdAndUpdate(
-      req.params.id,
-      { approvalByOIC: "rejected" },
-      { new: true }
-    );
-    res.json(issue);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// Supplier
-router.get("/supplier/approved", async (req, res) => {
-  try {
-    const issues = await Issue.find({ approvalByOIC: "approved" });
-    res.json(issues);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.put("/:id/supplier/update", async (req, res) => {
-  try {
-    const issue = await Issue.findByIdAndUpdate(
-      req.params.id,
-      { supplierStatus: req.body.status || req.body.supplierStatus || "supplied" },
-      { new: true }
-    );
-    res.json(issue);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// counts and filter
+// GET COUNTS - keep above /:id
 router.get("/dashboard/counts", async (req, res) => {
   try {
     const total = await Issue.countDocuments();
     const pending = await Issue.countDocuments({ approvalByJEE: "pending" });
-    const approved = await Issue.countDocuments({ approvalByOIC: "approved" });
-    const supplied = await Issue.countDocuments({ supplierStatus: "supplied" });
-    res.json({ total, pending, approved, supplied });
+    const approved = await Issue.countDocuments({ approvalByJEE: "approved" });
+    const rejected = await Issue.countDocuments({ approvalByJEE: "rejected" });
+
+    res.json({
+      total,
+      pending,
+      approved,
+      rejected,
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message || "Failed to fetch counts" });
   }
 });
 
-router.get("/vehicle/:vehicleId", async (req, res) => {
+// GET ALL ISSUES
+router.get("/", async (req, res) => {
   try {
-    const issues = await Issue.find({ vehicleId: req.params.vehicleId });
+    const issues = await Issue.find().sort({ createdAt: -1 });
     res.json(issues);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message || "Failed to fetch issues" });
   }
 });
 
-// compatibility endpoints
-router.put("/jee/:id", async (req, res) => {
+// GET MY REQUESTS
+router.get("/my-requests", async (req, res) => {
+  try {
+    const issues = await Issue.find().sort({ createdAt: -1 });
+    res.json(issues);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Failed to fetch my requests" });
+  }
+});
+
+// JEE PENDING
+router.get("/jr-executive/pending", async (req, res) => {
+  try {
+    const issues = await Issue.find({ approvalByJEE: "pending" }).sort({
+      createdAt: -1,
+    });
+    res.json(issues);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Failed to fetch pending issues" });
+  }
+});
+
+// JEE APPROVE
+router.put("/:id/jr-executive/approve", async (req, res) => {
   try {
     const issue = await Issue.findByIdAndUpdate(
       req.params.id,
-      { approvalByJEE: req.body.status },
+      {
+        approvalByJEE: "approved",
+        jeeComment: req.body.comment || "",
+      },
       { new: true }
     );
+
+    if (!issue) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
     res.json(issue);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message || "Failed to approve issue" });
   }
 });
 
-router.put("/oic/:id", async (req, res) => {
+// JEE REJECT
+router.put("/:id/jr-executive/reject", async (req, res) => {
   try {
     const issue = await Issue.findByIdAndUpdate(
       req.params.id,
-      { approvalByOIC: req.body.status },
+      {
+        approvalByJEE: "rejected",
+        jeeComment: req.body.comment || "",
+      },
       { new: true }
     );
+
+    if (!issue) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
     res.json(issue);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message || "Failed to reject issue" });
   }
 });
 
-router.put("/supplier/:id", async (req, res) => {
+// OIC PENDING
+router.get("/oic/pending", async (req, res) => {
+  try {
+    const issues = await Issue.find({
+      approvalByJEE: "approved",
+      approvalByOIC: "pending",
+    }).sort({ createdAt: -1 });
+
+    res.json(issues);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Failed to fetch OIC pending issues" });
+  }
+});
+
+// OIC APPROVE
+router.put("/:id/oic/approve", async (req, res) => {
   try {
     const issue = await Issue.findByIdAndUpdate(
       req.params.id,
-      { supplierStatus: req.body.supplierStatus },
+      {
+        approvalByOIC: "approved",
+        oicComment: req.body.comment || "",
+      },
       { new: true }
     );
+
+    if (!issue) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
     res.json(issue);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message || "Failed to approve issue by OIC" });
   }
 });
 
-// param route last
+// OIC REJECT
+router.put("/:id/oic/reject", async (req, res) => {
+  try {
+    const issue = await Issue.findByIdAndUpdate(
+      req.params.id,
+      {
+        approvalByOIC: "rejected",
+        oicComment: req.body.comment || "",
+      },
+      { new: true }
+    );
+
+    if (!issue) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
+    res.json(issue);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Failed to reject issue by OIC" });
+  }
+});
+
+// SUPPLIER APPROVED LIST
+router.get("/supplier/approved", async (req, res) => {
+  try {
+    const issues = await Issue.find({
+      approvalByJEE: "approved",
+      approvalByOIC: "approved",
+    }).sort({ createdAt: -1 });
+
+    res.json(issues);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Failed to fetch supplier issues" });
+  }
+});
+
+// SUPPLIER UPDATE
+router.put("/:id/supplier/update", async (req, res) => {
+  try {
+    const issue = await Issue.findByIdAndUpdate(
+      req.params.id,
+      {
+        supplierStatus: req.body.status || "supplied",
+        supplierComment: req.body.comment || "",
+      },
+      { new: true }
+    );
+
+    if (!issue) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
+    res.json(issue);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Failed to update supplier status" });
+  }
+});
+
+// GET SINGLE ISSUE - keep last
 router.get("/:id", async (req, res) => {
   try {
     const issue = await Issue.findById(req.params.id);
-    if (!issue) return res.status(404).json({ message: "Issue not found" });
+
+    if (!issue) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
     res.json(issue);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message || "Failed to fetch issue" });
   }
 });
 

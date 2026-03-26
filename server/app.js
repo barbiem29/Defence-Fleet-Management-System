@@ -20,7 +20,6 @@ app.use(express.json());
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/vehicles", require("./routes/vehicles"));
 app.use("/api/maintenance", require("./routes/issues"));
-app.use("/api/maintenance", require("./routes/issues")); // kept same as your original functionality
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });

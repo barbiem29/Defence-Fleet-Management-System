@@ -3,11 +3,18 @@ const router = express.Router();
 const Vehicle = require("../models/Vehicle");
 const protect = require("../middleware/authMiddleware");
 
-// All vehicle routes require login
-router.use(protect);
+// ─── Get All Vehicles (PUBLIC FOR TESTING) ─────────────────
+router.get("/", async (req, res) => {
+  try {
+    const vehicles = await Vehicle.find().populate("createdBy", "name email role");
+    res.json(vehicles);
+  } catch (err) {
+    res.status(500).json({ error: err.message || "Failed to fetch vehicles" });
+  }
+});
 
-// ─── Add Vehicle ────────────────────────────────────────────
-router.post("/", async (req, res) => {
+// ─── Add Vehicle (PROTECTED) ───────────────────────────────
+router.post("/", protect, async (req, res) => {
   try {
     const { vehicleId, description, status } = req.body;
 
@@ -33,18 +40,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ─── Get All Vehicles ───────────────────────────────────────
-router.get("/", async (req, res) => {
-  try {
-    const vehicles = await Vehicle.find().populate("createdBy", "name email role");
-    res.json(vehicles);
-  } catch (err) {
-    res.status(500).json({ error: err.message || "Failed to fetch vehicles" });
-  }
-});
-
-// ─── Delete Vehicle ─────────────────────────────────────────
-router.delete("/:id", async (req, res) => {
+// ─── Delete Vehicle (PROTECTED) ────────────────────────────
+router.delete("/:id", protect, async (req, res) => {
   try {
     const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
 
