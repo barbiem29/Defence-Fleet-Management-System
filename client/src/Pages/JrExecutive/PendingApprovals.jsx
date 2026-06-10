@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import { maintenanceAPI, handleAPIError } from "../../utils/api";
+import { maintenanceAPI, handleAPIError } from '../../utils/Api';
 import { CheckCircle2, XCircle, Clock, AlertCircle } from "lucide-react";
 
 const PendingApprovals = () => {

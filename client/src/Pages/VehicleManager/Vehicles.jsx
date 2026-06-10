@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../Components/Layout';
-import { vehicleAPI, handleAPIError } from '../../utils/api';
+import { vehicleAPI, handleAPIError } from '../../utils/Api';
 import { Truck, Search, Filter, Plus } from 'lucide-react';
 
 const Vehicles = () => {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
-import { maintenanceAPI, handleAPIError } from "../../utils/api";
+import { maintenanceAPI, handleAPIError } from '../../utils/Api';
 import {
   ArrowLeft,
   CheckCircle2,

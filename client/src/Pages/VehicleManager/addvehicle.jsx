@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../Components/Layout';
-import { vehicleAPI, handleAPIError } from '../../utils/api';
+import { vehicleAPI, handleAPIError } from '../../utils/Api';
 import { Save, ArrowLeft, Truck, AlertCircle, CheckCircle } from 'lucide-react';
 
 const VEHICLE_CLASSES = [

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from '../../Components/Layout';
-import { maintenanceAPI, handleAPIError } from "../../utils/api";
+import { maintenanceAPI, handleAPIError } from '../../utils/Api';
 import { XCircle, Eye, Search, AlertTriangle } from "lucide-react";
 
 const RejectedIssues = () => {

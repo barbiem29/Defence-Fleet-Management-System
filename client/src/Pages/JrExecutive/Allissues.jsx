@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import { maintenanceAPI, handleAPIError } from '../../utils/api';
+import { maintenanceAPI, handleAPIError } from '../../utils/Api';
 import { Search, Filter, Eye, AlertTriangle, ArrowUpDown } from 'lucide-react';
 
 const AllIssues = () => {
