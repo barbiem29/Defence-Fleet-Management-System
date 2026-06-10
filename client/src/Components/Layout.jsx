@@ -86,7 +86,7 @@ const Layout = ({ children }) => {
           <div className="p-5 border-b border-olive-700/25">
             <div className="flex items-center gap-3">
               <div className="w-14 h-14 bg-military-950 rounded-sm border border-olive-700/40 flex items-center justify-center flex-shrink-0">
-                <img src="logo.png" alt="DFMS Logo" className="w-10 h-10 object-contain" />
+                <img src="/logo.png" alt="DFMS Logo" className="w-10 h-10 object-contain" />
               </div>
               <div>
                 <h1 className="font-display text-2xl font-bold text-olive-400 tracking-widest leading-none">DFMS</h1>

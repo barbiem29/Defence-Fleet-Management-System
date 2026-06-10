@@ -62,7 +62,7 @@ const Login = () => {
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center mb-2">
               <img
-                src="logo.png"
+                src="/logo.png"
                 alt="DFMS Logo"
                 className="w-26 h-26 md:w-28 md:h-28 object-contain"
               />
