@@ -348,16 +348,4 @@ This project demonstrates practical implementation of:
 
 ---
 
-## Author
 
-### Barbie Mathur
-
-Engineering Student | Full Stack Developer | Backend Enthusiast
-
-GitHub: https://github.com/barbiem29
-
-LinkedIn: https://www.linkedin.com/in/barbiemathur29/
-
----
-
-⭐ If you found this project useful, consider giving it a star.
