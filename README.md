@@ -104,7 +104,11 @@ The system uses **JWT authentication** and **Role-Based Access Control (RBAC)** 
 **Authentication**
 - JWT Authentication
 - Role-Based Access Control (RBAC)
+## API Documentation
 
+Full backend API reference for all endpoints and workflows is available below:
+
+https://github.com/IkshaMalhotra/Defence-Fleet-Management-System/blob/main/API.md
 ---
 
 ## Installation and Setup
